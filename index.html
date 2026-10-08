@@ -13,18 +13,435 @@
 
 </head>
 
+<!-- RENTAL DATE PICKER -->
+<div id="rental-date-picker" class="rental-date-picker">
 
+    <div class="rental-date-box">
+
+        <div class="rental-date-header">
+            <h2>Select your rental dates</h2>
+
+            <button type="button" onclick="closeRentalDatePicker()">×</button>
+        </div>
+
+        <div class="rental-date-top">
+
+            <div class="date-select-box active" id="start-box">
+                <span>START DATE</span>
+                <strong id="selected-start-date">Select date</strong>
+            </div>
+
+            <div class="date-select-box" id="end-box">
+                <span>END DATE</span>
+                <strong id="selected-end-date">Select date</strong>
+            </div>
+
+            <button
+                type="button"
+                class="reset-dates"
+                onclick="resetRentalDates()">
+                Reset dates
+            </button>
+
+        </div>
+
+        <div class="calendar-navigation">
+
+            <button type="button" onclick="changeMonth(-1)">‹</button>
+
+            <div id="month-title-left"></div>
+
+            <div id="month-title-right"></div>
+
+            <button type="button" onclick="changeMonth(1)">›</button>
+
+        </div>
+
+        <div class="calendar-container">
+
+            <div id="calendar-left" class="calendar"></div>
+
+            <div id="calendar-right" class="calendar"></div>
+
+        </div>
+
+        <div class="rental-date-footer">
+
+            <button
+                type="button"
+                class="cancel-date"
+                onclick="closeRentalDatePicker()">
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                class="done-date"
+                onclick="confirmRentalDates()">
+                Done
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+let currentMonth = new Date();
+currentMonth.setDate(1);
+
+let startDate = null;
+let endDate = null;
+let selectingStart = true;
+
+
+function openRentalDatePicker() {
+
+    document.getElementById("rental-date-picker").style.display = "flex";
+
+    renderCalendars();
+
+}
+
+
+function closeRentalDatePicker() {
+
+    document.getElementById("rental-date-picker").style.display = "none";
+
+}
+
+
+function changeMonth(amount) {
+
+    currentMonth.setMonth(currentMonth.getMonth() + amount);
+
+    renderCalendars();
+
+}
+
+
+function resetRentalDates() {
+
+    startDate = null;
+    endDate = null;
+    selectingStart = true;
+
+    document.getElementById("selected-start-date").textContent = "Select date";
+    document.getElementById("selected-end-date").textContent = "Select date";
+
+    document.getElementById("start-box").classList.add("active");
+    document.getElementById("end-box").classList.remove("active");
+
+    renderCalendars();
+
+}
+
+
+function selectDate(date) {
+
+    if (selectingStart) {
+
+        startDate = new Date(date);
+        endDate = null;
+
+        selectingStart = false;
+
+        document.getElementById("selected-start-date").textContent =
+            formatDate(startDate);
+
+        document.getElementById("selected-end-date").textContent =
+            "Select date";
+
+        document.getElementById("start-box").classList.remove("active");
+        document.getElementById("end-box").classList.add("active");
+
+    } else {
+
+        if (date < startDate) {
+            return;
+        }
+
+        endDate = new Date(date);
+
+        selectingStart = true;
+
+        document.getElementById("selected-end-date").textContent =
+            formatDate(endDate);
+
+        document.getElementById("start-box").classList.add("active");
+        document.getElementById("end-box").classList.remove("active");
+
+    }
+
+    renderCalendars();
+
+}
+
+
+function formatDate(date) {
+
+    return date.toLocaleDateString("en-NZ", {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+    });
+
+}
+
+
+function isSameDay(a, b) {
+
+    if (!a || !b) return false;
+
+    return (
+        a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate()
+    );
+
+}
+
+
+function isBetween(date) {
+
+    if (!startDate || !endDate) return false;
+
+    return date > startDate && date < endDate;
+
+}
+
+
+function renderCalendars() {
+
+    const leftMonth = new Date(currentMonth);
+
+    const rightMonth = new Date(currentMonth);
+
+    rightMonth.setMonth(rightMonth.getMonth() + 1);
+
+    document.getElementById("month-title-left").textContent =
+        leftMonth.toLocaleDateString("en-NZ", {
+            month: "long",
+            year: "numeric"
+        });
+
+    document.getElementById("month-title-right").textContent =
+        rightMonth.toLocaleDateString("en-NZ", {
+            month: "long",
+            year: "numeric"
+        });
+
+    renderCalendar(
+        document.getElementById("calendar-left"),
+        leftMonth
+    );
+
+    renderCalendar(
+        document.getElementById("calendar-right"),
+        rightMonth
+    );
+
+}
+
+
+function renderCalendar(container, month) {
+
+    container.innerHTML = "";
+
+    const weekdays = [
+        "Su",
+        "Mo",
+        "Tu",
+        "We",
+        "Th",
+        "Fr",
+        "Sa"
+    ];
+
+    weekdays.forEach(day => {
+
+        const el = document.createElement("div");
+
+        el.className = "calendar-weekday";
+
+        el.textContent = day;
+
+        container.appendChild(el);
+
+    });
+
+
+    const firstDay =
+        new Date(
+            month.getFullYear(),
+            month.getMonth(),
+            1
+        ).getDay();
+
+
+    const daysInMonth =
+        new Date(
+            month.getFullYear(),
+            month.getMonth() + 1,
+            0
+        ).getDate();
+
+
+    for (let i = 0; i < firstDay; i++) {
+
+        const empty = document.createElement("div");
+
+        empty.className = "calendar-empty";
+
+        container.appendChild(empty);
+
+    }
+
+
+    for (let day = 1; day <= daysInMonth; day++) {
+
+        const date =
+            new Date(
+                month.getFullYear(),
+                month.getMonth(),
+                day
+            );
+
+        const el = document.createElement("button");
+
+        el.type = "button";
+
+        el.className = "calendar-day";
+
+        el.textContent = day;
+
+
+        if (isSameDay(date, startDate)) {
+
+            el.classList.add("start-date");
+
+        }
+
+
+        if (isSameDay(date, endDate)) {
+
+            el.classList.add("end-date");
+
+        }
+
+
+        if (isBetween(date)) {
+
+            el.classList.add("date-in-range");
+
+        }
+
+
+        if (
+            startDate &&
+            !endDate &&
+            date < startDate
+        ) {
+
+            el.classList.add("disabled-date");
+
+        }
+
+
+        el.onclick = function () {
+
+            if (
+                startDate &&
+                !endDate &&
+                date < startDate
+            ) {
+
+                return;
+
+            }
+
+            selectDate(date);
+
+        };
+
+
+        container.appendChild(el);
+
+    }
+
+}
+
+
+function confirmRentalDates() {
+
+    if (!startDate || !endDate) {
+
+        alert("Please select both a start date and an end date.");
+
+        return;
+
+    }
+
+
+    document.getElementById("start-date-display").textContent =
+        formatDate(startDate);
+
+
+    const endDisplay =
+        document.getElementById("end-date-display");
+
+    if (endDisplay) {
+
+        endDisplay.textContent =
+            formatDate(endDate);
+
+    }
+
+
+    closeRentalDatePicker();
+
+}
+
+
+document.addEventListener("click", function(event) {
+
+    const picker =
+        document.getElementById("rental-date-picker");
+
+    const box =
+        document.querySelector(".rental-date-box");
+
+    if (
+        picker &&
+        picker.style.display === "flex" &&
+        event.target === picker
+    ) {
+
+        closeRentalDatePicker();
+
+    }
+
+});
+
+</script>
 <body>
 
-    <!-- TOP GREEN BAR -->
+
+    <!-- TOP BAR -->
+
     <div class="top-bar">
 
         <div class="top-container">
 
             <div class="top-links">
+
                 <a href="#">Resources</a>
-                <a href="#">About Us</a>
-                <a href="#">Contact</a>
+
+                <a href="#about">About Us</a>
+
+                <a href="#contact">Contact</a>
+
             </div>
 
         </div>
@@ -32,30 +449,29 @@
     </div>
 
 
+
     <!-- MAIN HEADER -->
+
     <header class="main-header">
 
         <div class="header-container">
 
+
             <!-- LOGO -->
+
             <a href="index.html" class="logo-link">
 
-                <img
-                    src="images/hawk-logo.png"
-                    alt="Hawk Tool Hire"
-                    class="logo"
-                >
+                <img src="images/hawk-logo.png" alt="Hawk Tool Hire" class="logo">
 
             </a>
 
 
+
             <!-- SEARCH -->
+
             <div class="search-box">
 
-                <input
-                    type="text"
-                    placeholder="What are you looking for?"
-                >
+                <input type="text" placeholder="What are you looking for?">
 
                 <button type="button">
                     🔍
@@ -64,25 +480,30 @@
             </div>
 
 
+
             <!-- HEADER BUTTONS -->
+
             <div class="header-actions">
 
                 <a href="#" class="login-button">
                     Log in / Sign up
                 </a>
 
-                <a href="#" class="quote-button">
+                <a href="#contact" class="quote-button">
                     Get a Quote
                 </a>
 
             </div>
+
 
         </div>
 
     </header>
 
 
+
     <!-- NAVIGATION -->
+
     <nav class="navigation">
 
         <div class="nav-container">
@@ -103,7 +524,7 @@
                 About Us
             </a>
 
-            <a href="#contact">
+            <a href="index.html#contact">
                 Contact
             </a>
 
@@ -112,36 +533,67 @@
     </nav>
 
 
+
     <!-- HERO SECTION -->
+
     <section class="hero">
 
         <div class="hero-overlay"></div>
 
         <div class="hero-content">
 
+
             <h1>
                 Find the Right Equipment<br>
                 for Your Project
             </h1>
+
 
             <p>
                 Reliable equipment hire in Christchurch
             </p>
 
 
+
             <!-- RENTAL SEARCH BOX -->
+
             <div class="rental-box">
+
 
                 <div class="rental-item">
 
                     <span class="rental-icon">📍</span>
 
                     <div>
+
                         <small>Rental location</small>
+
                         <strong>Christchurch</strong>
+
                     </div>
 
                 </div>
+                <div class="rental-field equipment-field">
+                    <span class="equipment-icon">🚜</span>
+
+                    <div class="equipment-content">
+                        <span class="field-label">Equipment type</span>
+                        <select>
+                            <option value="">Select equipment</option>
+                            <option value="hilti-breaker">Hilti Breaker</option>
+                            <option value="hilti-drill">Small Hilti Drill &amp; Interchangeable Bits</option>
+                            <option value="mixer">Concrete Mixer</option>
+                            <option value="ladders">Ladders</option>
+                            <option value="edger">Lawn Edger</option>
+                            <option value="generator">Generator</option>
+                            <option value="compressor">180L Air Compressor</option>
+                            <option value="straight-edge">Straight Edge</option>
+                            <option value="flat-rake">Flat Rake</option>
+                            <option value="rebar-tier">Rebar Tier</option>
+                        </select>
+                    </div>
+                </div>
+
 
 
                 <div class="rental-item">
@@ -149,11 +601,16 @@
                     <span class="rental-icon">📅</span>
 
                     <div>
+
                         <small>Start date</small>
-                        <strong>Select date</strong>
+                        <strong id="start-date-display" class="date-trigger" onclick="openRentalDatePicker()">
+                           Select date
+                        </strong>
+
                     </div>
 
                 </div>
+
 
 
                 <div class="rental-item">
@@ -161,33 +618,39 @@
                     <span class="rental-icon">📅</span>
 
                     <div>
+
                         <small>End date</small>
-                        <strong>Select date</strong>
+                        <strong class="date-display" id="end-date-display" onclick="openDatePicker('end')">
+                            Select date
+                        </strong>
+
                     </div>
 
                 </div>
+
 
 
                 <div class="rental-choice">
 
                     <label>
-                        <input
-                            type="radio"
-                            name="delivery"
-                            checked
-                        >
+
+                        <input type="radio" name="delivery" checked>
+
                         Pickup
+
                     </label>
 
+
                     <label>
-                        <input
-                            type="radio"
-                            name="delivery"
-                        >
+
+                        <input type="radio" name="delivery">
+
                         Delivery
+
                     </label>
 
                 </div>
+
 
 
                 <button class="start-button">
@@ -197,19 +660,24 @@
             </div>
 
 
+
             <a href="#equipment" class="hero-button">
                 VIEW EQUIPMENT
             </a>
+
 
         </div>
 
     </section>
 
 
+
     <!-- EQUIPMENT SECTION -->
+
     <section class="equipment-section" id="equipment">
 
         <div class="section-container">
+
 
             <div class="section-heading">
 
@@ -229,15 +697,20 @@
             </div>
 
 
+
             <div class="equipment-grid">
 
 
                 <!-- CARD 1 -->
+
                 <div class="equipment-card">
 
                     <div class="equipment-image">
+
                         <span>MINI DIGGER</span>
+
                     </div>
+
 
                     <div class="equipment-info">
 
@@ -250,6 +723,7 @@
                             landscaping and earthworks.
                         </p>
 
+
                         <div class="equipment-bottom">
 
                             <span>
@@ -267,12 +741,17 @@
                 </div>
 
 
+
                 <!-- CARD 2 -->
+
                 <div class="equipment-card">
 
                     <div class="equipment-image compactor">
+
                         <span>PLATE COMPACTOR</span>
+
                     </div>
+
 
                     <div class="equipment-info">
 
@@ -285,6 +764,7 @@
                             for construction and landscaping.
                         </p>
 
+
                         <div class="equipment-bottom">
 
                             <span>
@@ -302,12 +782,17 @@
                 </div>
 
 
+
                 <!-- CARD 3 -->
+
                 <div class="equipment-card">
 
                     <div class="equipment-image trailer">
+
                         <span>TRAILERS</span>
+
                     </div>
+
 
                     <div class="equipment-info">
 
@@ -320,6 +805,7 @@
                             tools and equipment.
                         </p>
 
+
                         <div class="equipment-bottom">
 
                             <span>
@@ -336,6 +822,7 @@
 
                 </div>
 
+
             </div>
 
         </div>
@@ -343,10 +830,124 @@
     </section>
 
 
+
+    <!-- INDUSTRIES SECTION -->
+
+    <section class="services-section" id="industries">
+
+        <div class="section-container">
+
+
+            <div class="section-heading">
+
+                <p class="section-label">
+                    INDUSTRIES
+                </p>
+
+                <h2>
+                    Equipment for Different Projects
+                </h2>
+
+                <p>
+                    Equipment hire for landscaping,
+                    construction, earthworks and home projects.
+                </p>
+
+            </div>
+
+
+            <div class="services-grid">
+
+
+                <div class="service-item">
+
+                    <div class="service-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        Landscaping
+                    </h3>
+
+                    <p>
+                        Equipment for garden construction,
+                        earthworks and outdoor projects.
+                    </p>
+
+                </div>
+
+
+
+                <div class="service-item">
+
+                    <div class="service-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        Construction
+                    </h3>
+
+                    <p>
+                        Practical equipment for construction
+                        and building projects.
+                    </p>
+
+                </div>
+
+
+
+                <div class="service-item">
+
+                    <div class="service-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        Earthworks
+                    </h3>
+
+                    <p>
+                        Reliable equipment for digging,
+                        excavation and site preparation.
+                    </p>
+
+                </div>
+
+
+
+                <div class="service-item">
+
+                    <div class="service-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        Home Projects
+                    </h3>
+
+                    <p>
+                        Flexible equipment hire for
+                        DIY and residential projects.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
     <!-- SERVICES -->
+
     <section class="services-section" id="services">
 
         <div class="section-container">
+
 
             <div class="section-heading">
 
@@ -361,7 +962,9 @@
             </div>
 
 
+
             <div class="services-grid">
+
 
                 <div class="service-item">
 
@@ -379,6 +982,7 @@
                     </p>
 
                 </div>
+
 
 
                 <div class="service-item">
@@ -399,6 +1003,7 @@
                 </div>
 
 
+
                 <div class="service-item">
 
                     <div class="service-icon">
@@ -415,6 +1020,7 @@
                     </p>
 
                 </div>
+
 
 
                 <div class="service-item">
@@ -434,6 +1040,7 @@
 
                 </div>
 
+
             </div>
 
         </div>
@@ -441,30 +1048,34 @@
     </section>
 
 
+
     <!-- ABOUT -->
+
     <section class="about-section" id="about">
 
         <div class="about-container">
 
+
             <div class="about-text">
 
                 <p class="section-label">
-                    ABOUT HAWK TOOL HIRE
+                    ABOUT US
                 </p>
 
                 <h2>
-                    Equipment You Can Count On
+                    Reliable Equipment Hire for Christchurch
                 </h2>
 
                 <p>
-                    Hawk Tool Hire provides practical and reliable
-                    equipment hire services in Christchurch.
+                    Hawk Tool Hire provides practical equipment hire solutions
+                    for homeowners, tradespeople and contractors across
+                    Christchurch and surrounding areas.
                 </p>
 
                 <p>
-                    Whether you're working on a landscaping project,
-                    construction site or home improvement job,
-                    we're here to help you find the right equipment.
+                    We focus on reliable equipment, straightforward service
+                    and flexible hire options to help you get the job done
+                    efficiently.
                 </p>
 
                 <a href="#contact" class="dark-button">
@@ -473,60 +1084,75 @@
 
             </div>
 
+
         </div>
 
     </section>
+
 
 
     <!-- CONTACT -->
-    <section class="contact-section" id="contact">
 
+    <section class="contact-section" id="contact">
         <div class="contact-container">
 
-            <div>
-
-                <p class="section-label">
-                    NEED EQUIPMENT?
-                </p>
-
-                <h2>
-                    Get a Quote Today
-                </h2>
-
+            <div class="contact-intro">
+                <h2>Contact Us</h2>
                 <p>
-                    Tell us what equipment you need
-                    and when you need it.
+                    Need equipment for your next project?
+                    Contact us for availability, pricing or a quote.
                 </p>
+            </div>
+
+            <div class="contact-details">
+
+                <div class="contact-item">
+                    <h3>Phone</h3>
+                    <a href="tel:0272572235">027 257 2235</a>
+                </div>
+
+                <div class="contact-item">
+                    <h3>Email</h3>
+                    <a href="mailto:hawktoolhire@gmail.com">
+                        hawktoolhire@gmail.com
+                    </a>
+                </div>
+
+                <div class="contact-item">
+                    <h3>Opening Hours</h3>
+                    <p>6:00 am – 6:00 pm</p>
+                    <p>6:00 pm – 9:00 pm by appointment</p>
+                </div>
+
+                <div class="contact-item">
+                    <h3>Service Area</h3>
+                    <p>Christchurch and surrounding areas</p>
+                </div>
 
             </div>
 
-
-            <a href="#" class="contact-button">
-                REQUEST A QUOTE
-            </a>
-
         </div>
-
     </section>
 
 
+
     <!-- FOOTER -->
+
     <footer>
 
         <div class="footer-container">
 
+
             <div class="footer-logo">
 
-                <img
-                    src="images/hawk-logo.png"
-                    alt="Hawk Tool Hire"
-                >
+                <img src="images/hawk-logo.png" alt="Hawk Tool Hire">
 
                 <p>
                     Equipment hire in Christchurch.
                 </p>
 
             </div>
+
 
 
             <div class="footer-links">
@@ -545,7 +1171,9 @@
 
             </div>
 
+
         </div>
+
 
 
         <div class="copyright">
@@ -554,7 +1182,9 @@
 
         </div>
 
+
     </footer>
+
 
 
 </body>
