@@ -36,10 +36,7 @@
                 <strong id="selected-end-date">Select date</strong>
             </div>
 
-            <button
-                type="button"
-                class="reset-dates"
-                onclick="resetRentalDates()">
+            <button type="button" class="reset-dates" onclick="resetRentalDates()">
                 Reset dates
             </button>
 
@@ -67,17 +64,11 @@
 
         <div class="rental-date-footer">
 
-            <button
-                type="button"
-                class="cancel-date"
-                onclick="closeRentalDatePicker()">
+            <button type="button" class="cancel-date" onclick="closeRentalDatePicker()">
                 Cancel
             </button>
 
-            <button
-                type="button"
-                class="done-date"
-                onclick="confirmRentalDates()">
+            <button type="button" class="done-date" onclick="confirmRentalDates()">
                 Done
             </button>
 
@@ -88,268 +79,255 @@
 </div>
 <script>
 
-let currentMonth = new Date();
-currentMonth.setDate(1);
+    let currentMonth = new Date();
+    currentMonth.setDate(1);
 
-let startDate = null;
-let endDate = null;
-let selectingStart = true;
-
-
-function openRentalDatePicker() {
-
-    document.getElementById("rental-date-picker").style.display = "flex";
-
-    renderCalendars();
-
-}
+    let startDate = null;
+    let endDate = null;
+    let selectingStart = true;
 
 
-function closeRentalDatePicker() {
+    function openRentalDatePicker() {
 
-    document.getElementById("rental-date-picker").style.display = "none";
+        document.getElementById("rental-date-picker").style.display = "flex";
 
-}
+        renderCalendars();
 
-
-function changeMonth(amount) {
-
-    currentMonth.setMonth(currentMonth.getMonth() + amount);
-
-    renderCalendars();
-
-}
+    }
 
 
-function resetRentalDates() {
+    function closeRentalDatePicker() {
 
-    startDate = null;
-    endDate = null;
-    selectingStart = true;
+        document.getElementById("rental-date-picker").style.display = "none";
 
-    document.getElementById("selected-start-date").textContent = "Select date";
-    document.getElementById("selected-end-date").textContent = "Select date";
-
-    document.getElementById("start-box").classList.add("active");
-    document.getElementById("end-box").classList.remove("active");
-
-    renderCalendars();
-
-}
+    }
 
 
-function selectDate(date) {
+    function changeMonth(amount) {
 
-    if (selectingStart) {
+        currentMonth.setMonth(currentMonth.getMonth() + amount);
 
-        startDate = new Date(date);
+        renderCalendars();
+
+    }
+
+
+    function resetRentalDates() {
+
+        startDate = null;
         endDate = null;
-
-        selectingStart = false;
-
-        document.getElementById("selected-start-date").textContent =
-            formatDate(startDate);
-
-        document.getElementById("selected-end-date").textContent =
-            "Select date";
-
-        document.getElementById("start-box").classList.remove("active");
-        document.getElementById("end-box").classList.add("active");
-
-    } else {
-
-        if (date < startDate) {
-            return;
-        }
-
-        endDate = new Date(date);
-
         selectingStart = true;
 
-        document.getElementById("selected-end-date").textContent =
-            formatDate(endDate);
+        document.getElementById("selected-start-date").textContent = "Select date";
+        document.getElementById("selected-end-date").textContent = "Select date";
 
         document.getElementById("start-box").classList.add("active");
         document.getElementById("end-box").classList.remove("active");
 
-    }
-
-    renderCalendars();
-
-}
-
-
-function formatDate(date) {
-
-    return date.toLocaleDateString("en-NZ", {
-        day: "numeric",
-        month: "short",
-        year: "numeric"
-    });
-
-}
-
-
-function isSameDay(a, b) {
-
-    if (!a || !b) return false;
-
-    return (
-        a.getFullYear() === b.getFullYear() &&
-        a.getMonth() === b.getMonth() &&
-        a.getDate() === b.getDate()
-    );
-
-}
-
-
-function isBetween(date) {
-
-    if (!startDate || !endDate) return false;
-
-    return date > startDate && date < endDate;
-
-}
-
-
-function renderCalendars() {
-
-    const leftMonth = new Date(currentMonth);
-
-    const rightMonth = new Date(currentMonth);
-
-    rightMonth.setMonth(rightMonth.getMonth() + 1);
-
-    document.getElementById("month-title-left").textContent =
-        leftMonth.toLocaleDateString("en-NZ", {
-            month: "long",
-            year: "numeric"
-        });
-
-    document.getElementById("month-title-right").textContent =
-        rightMonth.toLocaleDateString("en-NZ", {
-            month: "long",
-            year: "numeric"
-        });
-
-    renderCalendar(
-        document.getElementById("calendar-left"),
-        leftMonth
-    );
-
-    renderCalendar(
-        document.getElementById("calendar-right"),
-        rightMonth
-    );
-
-}
-
-
-function renderCalendar(container, month) {
-
-    container.innerHTML = "";
-
-    const weekdays = [
-        "Su",
-        "Mo",
-        "Tu",
-        "We",
-        "Th",
-        "Fr",
-        "Sa"
-    ];
-
-    weekdays.forEach(day => {
-
-        const el = document.createElement("div");
-
-        el.className = "calendar-weekday";
-
-        el.textContent = day;
-
-        container.appendChild(el);
-
-    });
-
-
-    const firstDay =
-        new Date(
-            month.getFullYear(),
-            month.getMonth(),
-            1
-        ).getDay();
-
-
-    const daysInMonth =
-        new Date(
-            month.getFullYear(),
-            month.getMonth() + 1,
-            0
-        ).getDate();
-
-
-    for (let i = 0; i < firstDay; i++) {
-
-        const empty = document.createElement("div");
-
-        empty.className = "calendar-empty";
-
-        container.appendChild(empty);
+        renderCalendars();
 
     }
 
 
-    for (let day = 1; day <= daysInMonth; day++) {
+    function selectDate(date) {
 
-        const date =
+        if (selectingStart) {
+
+            startDate = new Date(date);
+            endDate = null;
+
+            selectingStart = false;
+
+            document.getElementById("selected-start-date").textContent =
+                formatDate(startDate);
+
+            document.getElementById("selected-end-date").textContent =
+                "Select date";
+
+            document.getElementById("start-box").classList.remove("active");
+            document.getElementById("end-box").classList.add("active");
+
+        } else {
+
+            if (date < startDate) {
+                return;
+            }
+
+            endDate = new Date(date);
+
+            selectingStart = true;
+
+            document.getElementById("selected-end-date").textContent =
+                formatDate(endDate);
+
+            document.getElementById("start-box").classList.add("active");
+            document.getElementById("end-box").classList.remove("active");
+
+        }
+
+        renderCalendars();
+
+    }
+
+
+    function formatDate(date) {
+
+        return date.toLocaleDateString("en-NZ", {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+        });
+
+    }
+
+
+    function isSameDay(a, b) {
+
+        if (!a || !b) return false;
+
+        return (
+            a.getFullYear() === b.getFullYear() &&
+            a.getMonth() === b.getMonth() &&
+            a.getDate() === b.getDate()
+        );
+
+    }
+
+
+    function isBetween(date) {
+
+        if (!startDate || !endDate) return false;
+
+        return date > startDate && date < endDate;
+
+    }
+
+
+    function renderCalendars() {
+
+        const leftMonth = new Date(currentMonth);
+
+        const rightMonth = new Date(currentMonth);
+
+        rightMonth.setMonth(rightMonth.getMonth() + 1);
+
+        document.getElementById("month-title-left").textContent =
+            leftMonth.toLocaleDateString("en-NZ", {
+                month: "long",
+                year: "numeric"
+            });
+
+        document.getElementById("month-title-right").textContent =
+            rightMonth.toLocaleDateString("en-NZ", {
+                month: "long",
+                year: "numeric"
+            });
+
+        renderCalendar(
+            document.getElementById("calendar-left"),
+            leftMonth
+        );
+
+        renderCalendar(
+            document.getElementById("calendar-right"),
+            rightMonth
+        );
+
+    }
+
+
+    function renderCalendar(container, month) {
+
+        container.innerHTML = "";
+
+        const weekdays = [
+            "Su",
+            "Mo",
+            "Tu",
+            "We",
+            "Th",
+            "Fr",
+            "Sa"
+        ];
+
+        weekdays.forEach(day => {
+
+            const el = document.createElement("div");
+
+            el.className = "calendar-weekday";
+
+            el.textContent = day;
+
+            container.appendChild(el);
+
+        });
+
+
+        const firstDay =
             new Date(
                 month.getFullYear(),
                 month.getMonth(),
-                day
-            );
-
-        const el = document.createElement("button");
-
-        el.type = "button";
-
-        el.className = "calendar-day";
-
-        el.textContent = day;
+                1
+            ).getDay();
 
 
-        if (isSameDay(date, startDate)) {
+        const daysInMonth =
+            new Date(
+                month.getFullYear(),
+                month.getMonth() + 1,
+                0
+            ).getDate();
 
-            el.classList.add("start-date");
 
-        }
+        for (let i = 0; i < firstDay; i++) {
 
+            const empty = document.createElement("div");
 
-        if (isSameDay(date, endDate)) {
+            empty.className = "calendar-empty";
 
-            el.classList.add("end-date");
+            container.appendChild(empty);
 
         }
 
 
-        if (isBetween(date)) {
+        for (let day = 1; day <= daysInMonth; day++) {
 
-            el.classList.add("date-in-range");
+            const date =
+                new Date(
+                    month.getFullYear(),
+                    month.getMonth(),
+                    day
+                );
 
-        }
+            const el = document.createElement("button");
+
+            el.type = "button";
+
+            el.className = "calendar-day";
+
+            el.textContent = day;
 
 
-        if (
-            startDate &&
-            !endDate &&
-            date < startDate
-        ) {
+            if (isSameDay(date, startDate)) {
 
-            el.classList.add("disabled-date");
+                el.classList.add("start-date");
 
-        }
+            }
 
 
-        el.onclick = function () {
+            if (isSameDay(date, endDate)) {
+
+                el.classList.add("end-date");
+
+            }
+
+
+            if (isBetween(date)) {
+
+                el.classList.add("date-in-range");
+
+            }
+
 
             if (
                 startDate &&
@@ -357,74 +335,88 @@ function renderCalendar(container, month) {
                 date < startDate
             ) {
 
-                return;
+                el.classList.add("disabled-date");
 
             }
 
-            selectDate(date);
 
-        };
+            el.onclick = function () {
 
+                if (
+                    startDate &&
+                    !endDate &&
+                    date < startDate
+                ) {
 
-        container.appendChild(el);
+                    return;
 
-    }
+                }
 
-}
+                selectDate(date);
 
-
-function confirmRentalDates() {
-
-    if (!startDate || !endDate) {
-
-        alert("Please select both a start date and an end date.");
-
-        return;
-
-    }
+            };
 
 
-    document.getElementById("start-date-display").textContent =
-        formatDate(startDate);
+            container.appendChild(el);
 
-
-    const endDisplay =
-        document.getElementById("end-date-display");
-
-    if (endDisplay) {
-
-        endDisplay.textContent =
-            formatDate(endDate);
+        }
 
     }
 
 
-    closeRentalDatePicker();
+    function confirmRentalDates() {
 
-}
+        if (!startDate || !endDate) {
+
+            alert("Please select both a start date and an end date.");
+
+            return;
+
+        }
 
 
-document.addEventListener("click", function(event) {
+        document.getElementById("start-date-display").textContent =
+            formatDate(startDate);
 
-    const picker =
-        document.getElementById("rental-date-picker");
 
-    const box =
-        document.querySelector(".rental-date-box");
+        const endDisplay =
+            document.getElementById("end-date-display");
 
-    if (
-        picker &&
-        picker.style.display === "flex" &&
-        event.target === picker
-    ) {
+        if (endDisplay) {
+
+            endDisplay.textContent =
+                formatDate(endDate);
+
+        }
+
 
         closeRentalDatePicker();
 
     }
 
-});
+
+    document.addEventListener("click", function (event) {
+
+        const picker =
+            document.getElementById("rental-date-picker");
+
+        const box =
+            document.querySelector(".rental-date-box");
+
+        if (
+            picker &&
+            picker.style.display === "flex" &&
+            event.target === picker
+        ) {
+
+            closeRentalDatePicker();
+
+        }
+
+    });
 
 </script>
+
 <body>
 
 
@@ -579,17 +571,22 @@ document.addEventListener("click", function(event) {
                     <div class="equipment-content">
                         <span class="field-label">Equipment type</span>
                         <select>
-                            <option value="">Select equipment</option>
-                            <option value="hilti-breaker">Hilti Breaker</option>
-                            <option value="hilti-drill">Small Hilti Drill &amp; Interchangeable Bits</option>
-                            <option value="mixer">Concrete Mixer</option>
-                            <option value="ladders">Ladders</option>
-                            <option value="edger">Lawn Edger</option>
-                            <option value="generator">Generator</option>
-                            <option value="compressor">180L Air Compressor</option>
-                            <option value="straight-edge">Straight Edge</option>
-                            <option value="flat-rake">Flat Rake</option>
-                            <option value="rebar-tier">Rebar Tier</option>
+                            <option value="">Select Equipment</option>
+                            <option value="cement-mixer">Electric Cement Mixer 140L</option>
+                            <option value="hilti-te5">Hilti TE5 Hammer Drill</option>
+                            <option value="makita-rebar-tie-gun">Makita Rebar Tie Gun</option>
+                            <option value="hilti-te1000">Hilti TE1000 Breaker</option>
+                            <option value="plate-compactor">68kg Reversible Plate Compactor</option>
+                            <option value="hilti-nail-gun">Hilti Nail Gun</option>
+                            <option value="step-ladder">Step Ladder 1.8m (6')</option>
+                            <option value="hilti-te7c">Hilti TE 7-C Hammer Drill</option>
+                            <option value="rotating-laser">Rotating Laser</option>
+                            <option value="wheel-barrow">Wheel Barrow</option>
+                            <option value="air-compressor">Air Compressor</option>
+                            <option value="powermax-generator">PowerMax Generator 2600W XPR2800</option>
+                            <option value="ryobi-lawn-edger">Ryobi Lawn Edger</option>
+                            <option value="makita-battery-strimmer">Makita Battery Strimmer</option>
+                            <option value="ryobi-petrol-mower">Ryobi 46in Cut Petrol Mower</option>
                         </select>
                     </div>
                 </div>
@@ -604,7 +601,7 @@ document.addEventListener("click", function(event) {
 
                         <small>Start date</small>
                         <strong id="start-date-display" class="date-trigger" onclick="openRentalDatePicker()">
-                           Select date
+                            Select date
                         </strong>
 
                     </div>
@@ -672,301 +669,388 @@ document.addEventListener("click", function(event) {
 
 
 
-    
 
 
-<!-- EQUIPMENT SECTION -->
-<section class="equipment-section" id="equipment">
-    <div class="section-container">
 
-        <div class="section-heading">
-            <p class="section-label">OUR EQUIPMENT</p>
-            <h2>Equipment for Every Project</h2>
-            <p>Quality tools and equipment available for hire throughout Christchurch.</p>
+    <!-- EQUIPMENT SECTION -->
+    <section class="equipment-section" id="equipment">
+        <div class="section-container">
+
+            <div class="section-heading">
+                <p class="section-label">OUR EQUIPMENT</p>
+                <h2>Equipment for Every Project</h2>
+                <p>Quality tools and equipment available for hire throughout Christchurch.</p>
+            </div>
+
+            <div class="equipment-grid">
+
+                <!-- 1. Electric Cement Mixer 140L -->
+                <article class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="images/cement-mixer.png" alt="Electric Cement Mixer 140L">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">MIXING EQUIPMENT</p>
+                        <h3>Electric Cement Mixer 140L</h3>
+                        <p>140-litre electric cement mixer for concrete and mortar mixing.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$25</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$60</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$110</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Electric%20Cement%20Mixer%20140L">Enquire
+                            →</a>
+                    </div>
+                </article>
+
+                <!-- 2. Hilti TE5 Hammer Drill -->
+                <article class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="images/hilti-te5.png" alt="Hilti TE5 Hammer Drill">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">DRILLING EQUIPMENT</p>
+                        <h3>Hilti TE5 Hammer Drill</h3>
+                        <p>Hammer drill for suitable drilling tasks in construction and renovation.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$10</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$24</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$50</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Hilti%20TE5%20Hammer%20Drill">Enquire
+                            →</a>
+                    </div>
+                </article>
+
+                <!-- 3. Makita Rebar Tie Gun -->
+                <article class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="images/rebar-tie-gun.png" alt="Makita Rebar Tie Gun">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">REBAR EQUIPMENT</p>
+                        <h3>Makita Rebar Tie Gun</h3>
+                        <p>Rebar tying tool for reinforcing steel work.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$40</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$90</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$180</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Makita%20Rebar%20Tie%20Gun">Enquire
+                            →</a>
+                    </div>
+                </article>
+
+                <!-- 4. Hilti TE1000 Breaker -->
+                <article class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="images/hilti-te1000.png" alt="Hilti TE1000 Breaker">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">BREAKING EQUIPMENT</p>
+                        <h3>Hilti TE1000 Breaker</h3>
+                        <p>Breaker for suitable concrete and demolition work.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$25</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$60</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$120</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Hilti%20TE1000%20Breaker">Enquire
+                            →</a>
+                    </div>
+                </article>
+
+                <!-- 5. 68kg Reversible Plate Compactor -->
+                <article class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="images/plate-compactor.png" alt="68kg Reversible Plate Compactor">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">COMPACTION EQUIPMENT</p>
+                        <h3>68kg Reversible Plate Compactor</h3>
+                        <p>Reversible plate compactor for ground preparation and compaction.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$80</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$216</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$440</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Plate%20Compactor">Enquire →</a>
+                    </div>
+                </article>
+
+                <!-- 6. Hilti Nail Gun -->
+                <article class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="images/hilti-nail-gun.png" alt="Hilti Nail Gun">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">FIXING EQUIPMENT</p>
+                        <h3>Hilti Nail Gun</h3>
+                        <p>Nail gun for compatible fastening applications.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$15</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$36</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$70</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Hilti%20Nail%20Gun">Enquire →</a>
+                    </div>
+                </article>
+
+                <!-- 7. Step Ladder -->
+                <article class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="images/step-ladder.png" alt="Step Ladder 1.8m (6 feet)">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">ACCESS EQUIPMENT</p>
+                        <h3>Step Ladder 1.8m (6')</h3>
+                        <p>1.8-metre step ladder for suitable access and maintenance tasks.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$12</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$28</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$55</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Step%20Ladder%201.8m">Enquire
+                            →</a>
+                    </div>
+                </article>
+
+                <!-- 8. Hilti TE 7-C Hammer Drill -->
+                <article class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="images/hilti-te7c.png" alt="Hilti TE 7-C Hammer Drill">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">DRILLING EQUIPMENT</p>
+                        <h3>Hilti TE 7-C Hammer Drill</h3>
+                        <p>Hammer drill for suitable drilling tasks in construction and renovation.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$10</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$24</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$50</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Hilti%20TE%207-C%20Hammer%20Drill">Enquire
+                            →</a>
+                    </div>
+                </article>
+                <!-- 9. Rotating Laser -->
+                <article class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="images/rotating-laser.png" alt="Rotating Laser">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">SURVEYING EQUIPMENT</p>
+                        <h3>Rotating Laser</h3>
+                        <p>Rotating laser for accurate levelling and construction layout tasks.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$85</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$190</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$410</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Rotating%20Laser">
+                            Enquire →
+                        </a>
+                    </div>
+                </article>
+                <!-- 10. Wheel Barrow -->
+                <article class="equipment-card">
+                    <div class="equipment-image wheel-image">
+                        <img src="images/wheel-barrow.png" alt="Wheel Barrow">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">SITE EQUIPMENT</p>
+                        <h3>Wheel Barrow</h3>
+                        <p>Wheel barrow for moving soil, concrete and construction materials.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$10</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$24</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$50</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Wheel%20Barrow">
+                            Enquire →
+                        </a>
+                    </div>
+                </article>
+
+                <!-- 11. Air Compressor -->
+                <article class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="images/air-compressor.png" alt="Air Compressor">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">AIR EQUIPMENT</p>
+                        <h3>Air Compressor</h3>
+                        <p>6.36 CFM air compressor with 40L tank and 115 PSI maximum pressure.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$30</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$70</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$140</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Air%20Compressor">
+                            Enquire →
+                        </a>
+                    </div>
+                </article>
+                <!-- 12. PowerMax Generator 2200W XPR2500 -->
+                <article class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="images/powermax-generator.png" alt="PowerMax Generator 2200W XPR2500">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">POWER EQUIPMENT</p>
+                        <h3>PowerMax Generator 2200W</h3>
+                        <p>PowerMax XPR2500 portable 2200W generator for site and general power supply.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$25</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$60</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$120</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20PowerMax%20Generator%202200W%20XPR2500">
+                            Enquire →
+                        </a>
+                    </div>
+                </article>
+                <!-- 13. Ryobi Lawn Edger -->
+                <article class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="images/lawn edger.png" alt="Ryobi Lawn Edger">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">GARDEN EQUIPMENT</p>
+                        <h3>Ryobi Lawn Edger</h3>
+                        <p>Corded lawn edger for creating clean and defined lawn edges.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$10</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$24</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$50</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Ryobi%20Lawn%20Edger">
+                            Enquire →
+                        </a>
+                    </div>
+                </article>
+                <!-- 14. Makita Battery Strimmer -->
+                <article class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="images/strimmer.png" alt="Makita Battery Strimmer">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">GARDEN EQUIPMENT</p>
+                        <h3>Makita Battery Strimmer</h3>
+                        <p>Battery-powered strimmer for trimming grass and maintaining lawn edges.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$28</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$65</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$130</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Makita%20Battery%20Strimmer">
+                            Enquire →
+                        </a>
+                    </div>
+                </article>
+                <!-- 15. Ryobi 46in Cut Petrol Mower -->
+                <article class="equipment-card">
+                    <div class="equipment-image">
+                        <img src="images/petrol mower.png" alt="Ryobi Petrol Mower">
+                    </div>
+                    <div class="equipment-info">
+                        <p class="equipment-category">GARDEN EQUIPMENT</p>
+                        <h3>Ryobi 46in Cut Petrol Mower</h3>
+                        <p>Petrol lawn mower for efficient cutting and general lawn maintenance.</p>
+                        <div class="equipment-pricing">
+                            <div class="price-option"><span>1 Day</span><strong>$30</strong></div>
+                            <div class="price-option"><span>3 Days</span><strong>$70</strong></div>
+                            <div class="price-option"><span>1 Week</span><strong>$140</strong></div>
+                        </div>
+                        <a class="equipment-enquire"
+                            href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Ryobi%20Petrol%20Mower">
+                            Enquire →
+                        </a>
+                    </div>
+                </article>
+            </div>
         </div>
+    </section>
 
-        <div class="equipment-grid">
+    <!-- REQUEST EQUIPMENT SECTION -->
+    <section class="request-section" id="request-equipment">
+        <div class="request-container">
 
-            <!-- 1. Electric Cement Mixer 140L -->
-            <article class="equipment-card">
-                <div class="equipment-image">
-                    <img src="images/cement-mixer.png" alt="Electric Cement Mixer 140L">
-                </div>
-                <div class="equipment-info">
-                    <p class="equipment-category">MIXING EQUIPMENT</p>
-                    <h3>Electric Cement Mixer 140L</h3>
-                    <p>140-litre electric cement mixer for concrete and mortar mixing.</p>
-                    <div class="equipment-pricing">
-                        <div class="price-option"><span>1 Day</span><strong>$25</strong></div>
-                        <div class="price-option"><span>3 Days</span><strong>$60</strong></div>
-                        <div class="price-option"><span>1 Week</span><strong>$110</strong></div>
-                    </div>
-                    <a class="equipment-enquire" href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Electric%20Cement%20Mixer%20140L">Enquire →</a>
-                </div>
-            </article>
-
-            <!-- 2. Hilti TE5 Hammer Drill -->
-            <article class="equipment-card">
-                <div class="equipment-image">
-                    <img src="images/hilti-te5.png" alt="Hilti TE5 Hammer Drill">
-                </div>
-                <div class="equipment-info">
-                    <p class="equipment-category">DRILLING EQUIPMENT</p>
-                    <h3>Hilti TE5 Hammer Drill</h3>
-                    <p>Hammer drill for suitable drilling tasks in construction and renovation.</p>
-                    <div class="equipment-pricing">
-                        <div class="price-option"><span>1 Day</span><strong>$10</strong></div>
-                        <div class="price-option"><span>3 Days</span><strong>$24</strong></div>
-                        <div class="price-option"><span>1 Week</span><strong>$50</strong></div>
-                    </div>
-                    <a class="equipment-enquire" href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Hilti%20TE5%20Hammer%20Drill">Enquire →</a>
-                </div>
-            </article>
-
-            <!-- 3. Makita Rebar Tie Gun -->
-            <article class="equipment-card">
-                <div class="equipment-image">
-                    <img src="images/rebar-tie-gun.png" alt="Makita Rebar Tie Gun">
-                </div>
-                <div class="equipment-info">
-                    <p class="equipment-category">REBAR EQUIPMENT</p>
-                    <h3>Makita Rebar Tie Gun</h3>
-                    <p>Rebar tying tool for reinforcing steel work.</p>
-                    <div class="equipment-pricing">
-                        <div class="price-option"><span>1 Day</span><strong>$40</strong></div>
-                        <div class="price-option"><span>3 Days</span><strong>$90</strong></div>
-                        <div class="price-option"><span>1 Week</span><strong>$180</strong></div>
-                    </div>
-                    <a class="equipment-enquire" href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Makita%20Rebar%20Tie%20Gun">Enquire →</a>
-                </div>
-            </article>
-
-            <!-- 4. Hilti TE1000 Breaker -->
-            <article class="equipment-card">
-                <div class="equipment-image">
-                    <img src="images/hilti-te1000.png" alt="Hilti TE1000 Breaker">
-                </div>
-                <div class="equipment-info">
-                    <p class="equipment-category">BREAKING EQUIPMENT</p>
-                    <h3>Hilti TE1000 Breaker</h3>
-                    <p>Breaker for suitable concrete and demolition work.</p>
-                    <div class="equipment-pricing">
-                        <div class="price-option"><span>1 Day</span><strong>$25</strong></div>
-                        <div class="price-option"><span>3 Days</span><strong>$60</strong></div>
-                        <div class="price-option"><span>1 Week</span><strong>$120</strong></div>
-                    </div>
-                    <a class="equipment-enquire" href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Hilti%20TE1000%20Breaker">Enquire →</a>
-                </div>
-            </article>
-
-            <!-- 5. 68kg Reversible Plate Compactor -->
-            <article class="equipment-card">
-                <div class="equipment-image">
-                    <img src="images/plate-compactor.png" alt="68kg Reversible Plate Compactor">
-                </div>
-                <div class="equipment-info">
-                    <p class="equipment-category">COMPACTION EQUIPMENT</p>
-                    <h3>68kg Reversible Plate Compactor</h3>
-                    <p>Reversible plate compactor for ground preparation and compaction.</p>
-                    <div class="equipment-pricing">
-                        <div class="price-option"><span>1 Day</span><strong>$80</strong></div>
-                        <div class="price-option"><span>3 Days</span><strong>$216</strong></div>
-                        <div class="price-option"><span>1 Week</span><strong>$440</strong></div>
-                    </div>
-                    <a class="equipment-enquire" href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Plate%20Compactor">Enquire →</a>
-                </div>
-            </article>
-
-            <!-- 6. Hilti Nail Gun -->
-            <article class="equipment-card">
-                <div class="equipment-image">
-                    <img src="images/hilti-nail-gun.png" alt="Hilti Nail Gun">
-                </div>
-                <div class="equipment-info">
-                    <p class="equipment-category">FIXING EQUIPMENT</p>
-                    <h3>Hilti Nail Gun</h3>
-                    <p>Nail gun for compatible fastening applications.</p>
-                    <div class="equipment-pricing">
-                        <div class="price-option"><span>1 Day</span><strong>$15</strong></div>
-                        <div class="price-option"><span>3 Days</span><strong>$36</strong></div>
-                        <div class="price-option"><span>1 Week</span><strong>$70</strong></div>
-                    </div>
-                    <a class="equipment-enquire" href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Hilti%20Nail%20Gun">Enquire →</a>
-                </div>
-            </article>
-
-            <!-- 7. Step Ladder -->
-            <article class="equipment-card">
-                <div class="equipment-image">
-                    <img src="images/step-ladder.png" alt="Step Ladder 1.8m (6 feet)">
-                </div>
-                <div class="equipment-info">
-                    <p class="equipment-category">ACCESS EQUIPMENT</p>
-                    <h3>Step Ladder 1.8m (6')</h3>
-                    <p>1.8-metre step ladder for suitable access and maintenance tasks.</p>
-                    <div class="equipment-pricing">
-                        <div class="price-option"><span>1 Day</span><strong>$12</strong></div>
-                        <div class="price-option"><span>3 Days</span><strong>$28</strong></div>
-                        <div class="price-option"><span>1 Week</span><strong>$55</strong></div>
-                    </div>
-                    <a class="equipment-enquire" href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Step%20Ladder%201.8m">Enquire →</a>
-                </div>
-            </article>
-
-            <!-- 8. Hilti TE 7-C Hammer Drill -->
-            <article class="equipment-card">
-                <div class="equipment-image">
-                    <img src="images/hilti-te7c.png" alt="Hilti TE 7-C Hammer Drill">
-                </div>
-                <div class="equipment-info">
-                    <p class="equipment-category">DRILLING EQUIPMENT</p>
-                    <h3>Hilti TE 7-C Hammer Drill</h3>
-                    <p>Hammer drill for suitable drilling tasks in construction and renovation.</p>
-                    <div class="equipment-pricing">
-                        <div class="price-option"><span>1 Day</span><strong>$10</strong></div>
-                        <div class="price-option"><span>3 Days</span><strong>$24</strong></div>
-                        <div class="price-option"><span>1 Week</span><strong>$50</strong></div>
-                    </div>
-                    <a class="equipment-enquire" href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Hilti%20TE%207-C%20Hammer%20Drill">Enquire →</a>
-                </div>
-            </article>
-            <!-- 9. Rotating Laser -->
-            <article class="equipment-card">
-                <div class="equipment-image">
-                    <img src="images/rotating-laser.png" alt="Rotating Laser">
-                </div>
-                <div class="equipment-info">
-                    <p class="equipment-category">SURVEYING EQUIPMENT</p>
-                    <h3>Rotating Laser</h3>
-                    <p>Rotating laser for accurate levelling and construction layout tasks.</p>
-                    <div class="equipment-pricing">
-                        <div class="price-option"><span>1 Day</span><strong>$85</strong></div>
-                        <div class="price-option"><span>3 Days</span><strong>$190</strong></div>
-                        <div class="price-option"><span>1 Week</span><strong>$410</strong></div>
-                    </div>
-                    <a class="equipment-enquire" href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Rotating%20Laser">
-                        Enquire →
-                </div>
-            </article>
-
-
-           <!-- 10. Wheel Barrow -->
-<article class="equipment-card">
-    <div class="equipment-image wheel-image">
-        <img src="images/wheel-barrow.png" alt="Wheel Barrow">
-    </div>
-
-    <div class="equipment-info">
-        <p class="equipment-category">SITE EQUIPMENT</p>
-
-        <h3>Wheel Barrow</h3>
-
-        <p>
-            Wheel barrow for moving soil, concrete and construction materials.
-        </p>
-
-        <div class="equipment-pricing">
-            <div class="price-option">
-                <span>1 Day</span>
-                <strong>$10</strong>
+            <div class="request-intro">
+                <p class="section-label">REQUEST EQUIPMENT</p>
+                <h2>Need Something Else?</h2>
+                <p>
+                    Can't find the equipment you need?
+                    Tell us what you're looking for and we'll see how we can help.
+                </p>
             </div>
 
-            <div class="price-option">
-                <span>3 Days</span>
-                <strong>$24</strong>
-            </div>
+            <form class="request-form" action="https://formsubmit.co/hawktoolhire@gmail.com" method="POST">
 
-            <div class="price-option">
-                <span>1 Week</span>
-                <strong>$50</strong>
-            </div>
+                <input type="hidden" name="_subject" value="New Equipment Request - Hawk Tool Hire">
+
+                <input type="hidden" name="_captcha" value="true">
+
+                <div class="request-field">
+                    <label for="request-name">Your Name *</label>
+                    <input id="request-name" type="text" name="Name" required placeholder="Enter your name">
+                </div>
+
+                <div class="request-field">
+                    <label for="request-email">Email Address *</label>
+                    <input id="request-email" type="email" name="Email" required placeholder="Enter your email">
+                </div>
+
+                <div class="request-field">
+                    <label for="request-equipment-name">Equipment Required *</label>
+                    <input id="request-equipment-name" type="text" name="Equipment Required" required
+                        placeholder="e.g. Generator, concrete saw">
+                </div>
+
+                <div class="request-field">
+                    <label for="request-date">Preferred Hire Date</label>
+                    <input id="request-date" type="date" name="Preferred Hire Date">
+                </div>
+
+                <div class="request-field">
+                    <label for="request-duration">Hire Duration</label>
+                    <select id="request-duration" name="Hire Duration">
+                        <option value="">Please select</option>
+                        <option>1 day</option>
+                        <option>3 days</option>
+                        <option>1 week</option>
+                        <option>Longer than 1 week</option>
+                    </select>
+                </div>
+
+                <div class="request-field">
+                    <label for="request-details">Additional Details</label>
+                    <textarea id="request-details" name="Additional Details" rows="4"
+                        placeholder="Quantity, specifications or other requirements"></textarea>
+                </div>
+
+                <button type="submit" class="request-submit">
+                    Request Equipment →
+                </button>
+
+            </form>
+
         </div>
-
-        <a class="equipment-enquire"
-           href="mailto:hawktoolhire@gmail.com?subject=Enquiry%20-%20Wheel%20Barrow">
-            Enquire →
-        </a>
-    </div>
-</article>
-        </div>
-    </div>
-</section>
-
-<!-- REQUEST EQUIPMENT SECTION -->
-<section class="request-section" id="request-equipment">
-    <div class="request-container">
-
-        <div class="request-intro">
-            <p class="section-label">REQUEST EQUIPMENT</p>
-            <h2>Need Something Else?</h2>
-            <p>
-                Can't find the equipment you need?
-                Tell us what you're looking for and we'll see how we can help.
-            </p>
-        </div>
-
-        <form class="request-form"
-              action="https://formsubmit.co/hawktoolhire@gmail.com"
-              method="POST">
-
-            <input type="hidden" name="_subject"
-                   value="New Equipment Request - Hawk Tool Hire">
-
-            <input type="hidden" name="_captcha" value="true">
-
-            <div class="request-field">
-                <label for="request-name">Your Name *</label>
-                <input id="request-name" type="text"
-                       name="Name" required
-                       placeholder="Enter your name">
-            </div>
-
-            <div class="request-field">
-                <label for="request-email">Email Address *</label>
-                <input id="request-email" type="email"
-                       name="Email" required
-                       placeholder="Enter your email">
-            </div>
-
-            <div class="request-field">
-                <label for="request-equipment-name">Equipment Required *</label>
-                <input id="request-equipment-name" type="text"
-                       name="Equipment Required" required
-                       placeholder="e.g. Generator, concrete saw">
-            </div>
-
-            <div class="request-field">
-                <label for="request-date">Preferred Hire Date</label>
-                <input id="request-date" type="date"
-                       name="Preferred Hire Date">
-            </div>
-
-            <div class="request-field">
-                <label for="request-duration">Hire Duration</label>
-                <select id="request-duration" name="Hire Duration">
-                    <option value="">Please select</option>
-                    <option>1 day</option>
-                    <option>3 days</option>
-                    <option>1 week</option>
-                    <option>Longer than 1 week</option>
-                </select>
-            </div>
-
-            <div class="request-field">
-                <label for="request-details">Additional Details</label>
-                <textarea id="request-details" name="Additional Details"
-                          rows="4"
-                          placeholder="Quantity, specifications or other requirements"></textarea>
-            </div>
-
-            <button type="submit" class="request-submit">
-                Request Equipment →
-            </button>
-
-        </form>
-
-    </div>
-</section>
+    </section>
 
 
 
